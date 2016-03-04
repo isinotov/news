@@ -11,10 +11,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
+            buildConfigField "String", "API_ENDPOINT", "\"https://api.tinkoff.ru/v1/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "API_ENDPOINT", "\"https://api.tinkoff.ru/v1/\""
         }
     }
 }
