@@ -9,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.isinotov.tinkoffnews.R;
 import com.example.isinotov.tinkoffnews.network.RestClient;
+import com.example.isinotov.tinkoffnews.utils.NetworkUtils;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -38,6 +41,7 @@ public class DetailNewsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mNewsId = getArguments().getLong(ARG_NEWS_ID);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -49,6 +53,13 @@ public class DetailNewsFragment extends Fragment {
                 .subscribeOn(Schedulers.io())
                 .subscribe(newsItemDetails -> {
                     mTextViewDetail.setText(Html.fromHtml(newsItemDetails.getPayload().getContent()));
+                }, throwable -> {
+                    if (NetworkUtils.isNetworkAvailable(getActivity()))
+                        Toast.makeText(getActivity(), R.string.error_happened, Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity(), R.string.check_internet_connection, Toast.LENGTH_SHORT).show();
+                    throwable.printStackTrace();
+                    getActivity().getFragmentManager().popBackStack();
                 });
     }
 

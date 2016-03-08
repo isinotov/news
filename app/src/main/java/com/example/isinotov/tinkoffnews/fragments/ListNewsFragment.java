@@ -16,6 +16,7 @@ import com.example.isinotov.tinkoffnews.adapters.NewsAdapter;
 import com.example.isinotov.tinkoffnews.models.NewsItem;
 import com.example.isinotov.tinkoffnews.models.NewsResponse;
 import com.example.isinotov.tinkoffnews.network.RestClient;
+import com.example.isinotov.tinkoffnews.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +81,10 @@ public class ListNewsFragment extends Fragment {
                     loadData();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }, throwable -> {
-                    Toast.makeText(getActivity(), R.string.error_happened, Toast.LENGTH_SHORT).show();
+                    if (NetworkUtils.isNetworkAvailable(getActivity()))
+                        Toast.makeText(getActivity(), R.string.error_happened, Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity(), R.string.check_internet_connection, Toast.LENGTH_SHORT).show();
                     throwable.printStackTrace();
                     mSwipeRefreshLayout.setRefreshing(false);
                 });

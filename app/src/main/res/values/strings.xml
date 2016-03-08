@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TinkoffNews</string>
     <string name="error_happened">Произошла ошибка</string>
+    <string name="check_internet_connection">Проверьте интернет соединение</string>
 </resources>
