@@ -45,22 +45,25 @@ public class ListNewsFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mAdapter = new NewsAdapter();
+        mAdapter = new NewsAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshData);
 
-
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(getActivity()).build();
-        // Create a new empty instance of Realm
-        Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
+
+        loadData();
+        return rootView;
+    }
+
+
+    public void loadData() {
         realm.beginTransaction();
         //Unfortunately realm is not supported sorting of objects
         RealmResults<NewsItem> newsItems = realm.where(NewsItem.class).findAll();
         realm.commitTransaction();
-        mAdapter.setData(newsItems);
+        mAdapter.setData(new ArrayList<>(newsItems));
         mAdapter.notifyDataSetChanged();
-        return rootView;
     }
 
     public void refreshData() {
@@ -71,10 +74,10 @@ public class ListNewsFragment extends Fragment {
                 .map(NewsResponse::getPayload)
                 .subscribe(newsItems -> {
                     realm.beginTransaction();
-                    Collection<NewsItem> realmNews = realm.copyToRealm(newsItems);
+                    realm.clear(NewsItem.class);
+                    realm.copyToRealm(newsItems);
                     realm.commitTransaction();
-                    mAdapter.setData(new ArrayList<>(realmNews));
-                    mAdapter.notifyDataSetChanged();
+                    loadData();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }, throwable -> {
                     Toast.makeText(getActivity(), R.string.error_happened, Toast.LENGTH_SHORT).show();

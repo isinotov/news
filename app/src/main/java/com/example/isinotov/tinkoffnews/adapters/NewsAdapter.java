@@ -1,5 +1,6 @@
 package com.example.isinotov.tinkoffnews.adapters;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -22,12 +23,22 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHolder> {
 
+    private final NewsAdapterCallback callback;
     List<NewsItem> mData;
 
     public void setData(List<NewsItem> data) {
         Comparator<Long> comparator = Collections.reverseOrder();
         Collections.sort(data, (lhs, rhs) -> comparator.compare(lhs.getPublicationDate().getMilliseconds(), rhs.getPublicationDate().getMilliseconds()));
         mData = data;
+    }
+
+
+    public NewsAdapter(Activity callback) {
+        try {
+            this.callback = (NewsAdapterCallback) callback;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("You have to implement NewsAdapterCallback");
+        }
     }
 
     @Override
@@ -40,9 +51,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
         NewsItem newsItem = mData.get(position);
         Calendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(newsItem.getPublicationDate().getMilliseconds());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMMM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMMM dd");
         holder.tvNewsTitle.setText(Html.fromHtml(newsItem.getText()));
         holder.tvDate.setText(dateFormat.format(calendar.getTime()));
+        holder.itemView.setOnClickListener(v -> callback.onNewsClicked(newsItem.getId()));
     }
 
     @Override
@@ -59,5 +71,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
             tvNewsTitle = (TextView) itemView.findViewById(R.id.newsTitle);
             tvDate = (TextView) itemView.findViewById(R.id.date);
         }
+    }
+
+
+    public interface NewsAdapterCallback {
+        void onNewsClicked(long newsId);
     }
 }
