@@ -1,6 +1,7 @@
 package com.example.isinotov.tinkoffnews.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,11 @@ import android.widget.TextView;
 import com.example.isinotov.tinkoffnews.R;
 import com.example.isinotov.tinkoffnews.models.NewsItem;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -19,6 +25,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
     List<NewsItem> mData;
 
     public void setData(List<NewsItem> data) {
+        Comparator<Long> comparator = Collections.reverseOrder();
+        Collections.sort(data, (lhs, rhs) -> comparator.compare(lhs.getPublicationDate().getMilliseconds(), rhs.getPublicationDate().getMilliseconds()));
         mData = data;
     }
 
@@ -29,7 +37,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
 
     @Override
     public void onBindViewHolder(NewsItemViewHolder holder, int position) {
-        holder.newsTitle.setText(mData.get(position).getText());
+        NewsItem newsItem = mData.get(position);
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(newsItem.getPublicationDate().getMilliseconds());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MMMM-dd");
+        holder.tvNewsTitle.setText(Html.fromHtml(newsItem.getText()));
+        holder.tvDate.setText(dateFormat.format(calendar.getTime()));
     }
 
     @Override
@@ -38,11 +51,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
     }
 
     public class NewsItemViewHolder extends RecyclerView.ViewHolder {
-        TextView newsTitle;
+        TextView tvNewsTitle;
+        TextView tvDate;
 
         public NewsItemViewHolder(View itemView) {
             super(itemView);
-            newsTitle = (TextView) itemView.findViewById(R.id.newsTitle);
+            tvNewsTitle = (TextView) itemView.findViewById(R.id.newsTitle);
+            tvDate = (TextView) itemView.findViewById(R.id.date);
         }
     }
 }

@@ -10,7 +10,7 @@ public class NewsItem extends RealmObject {
     private String name;
     private String text;
     private int bankInfoTypeId;
-    private PublicationDate publicationDate;
+    private DateHolder publicationDate;
 
     public int getBankInfoTypeId() {
         return bankInfoTypeId;
@@ -32,7 +32,7 @@ public class NewsItem extends RealmObject {
         this.name = name;
     }
 
-    public void setPublicationDate(PublicationDate publicationDate) {
+    public void setPublicationDate(DateHolder publicationDate) {
         this.publicationDate = publicationDate;
     }
 
@@ -44,7 +44,7 @@ public class NewsItem extends RealmObject {
         return name;
     }
 
-    public PublicationDate getPublicationDate() {
+    public DateHolder getPublicationDate() {
         return publicationDate;
     }
 

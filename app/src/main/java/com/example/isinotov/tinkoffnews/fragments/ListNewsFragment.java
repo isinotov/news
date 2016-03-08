@@ -22,6 +22,7 @@ import java.util.Collection;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -51,9 +52,11 @@ public class ListNewsFragment extends Fragment {
 
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(getActivity()).build();
         // Create a new empty instance of Realm
+        Realm.deleteRealm(realmConfiguration);
         realm = Realm.getInstance(realmConfiguration);
         realm.beginTransaction();
-        RealmResults<NewsItem> newsItems = realm.where(NewsItem.class).findAllSorted("publicationDate");
+        //Unfortunately realm is not supported sorting of objects
+        RealmResults<NewsItem> newsItems = realm.where(NewsItem.class).findAll();
         realm.commitTransaction();
         mAdapter.setData(newsItems);
         mAdapter.notifyDataSetChanged();
