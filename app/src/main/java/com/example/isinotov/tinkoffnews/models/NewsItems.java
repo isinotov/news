@@ -3,13 +3,13 @@ package com.example.isinotov.tinkoffnews.models;
 import java.util.List;
 
 /**
- * Created by isinotov on 08/03/2016.
+ * Created by isinotov on 04/03/2016.
  */
-public class NewsDetailsResponse {
+public class NewsItems {
     String resultCode;
-    NewsItemDetails payload;
+    List<NewsItem> payload;
 
-    public NewsItemDetails getPayload() {
+    public List<NewsItem> getPayload() {
         return payload;
     }
 

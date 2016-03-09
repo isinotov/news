@@ -14,16 +14,14 @@ import android.widget.Toast;
 import com.example.isinotov.tinkoffnews.R;
 import com.example.isinotov.tinkoffnews.adapters.NewsAdapter;
 import com.example.isinotov.tinkoffnews.models.NewsItem;
-import com.example.isinotov.tinkoffnews.models.NewsResponse;
+import com.example.isinotov.tinkoffnews.models.NewsItems;
 import com.example.isinotov.tinkoffnews.network.RestClient;
 import com.example.isinotov.tinkoffnews.utils.NetworkUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -35,23 +33,22 @@ import rx.schedulers.Schedulers;
 public class ListNewsFragment extends Fragment {
     RecyclerView mRecyclerView;
     NewsAdapter mAdapter;
-    Subscription subscription;
+    Subscription mSubscription;
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private Realm realm;
+    private Realm mRealm;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.news_list_fragment, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_news_list, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAdapter = new NewsAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this::refreshData);
-
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(getActivity()).build();
-        realm = Realm.getInstance(realmConfiguration);
+        mRealm = Realm.getInstance(realmConfiguration);
 
         loadData();
         return rootView;
@@ -59,25 +56,32 @@ public class ListNewsFragment extends Fragment {
 
 
     public void loadData() {
-        realm.beginTransaction();
+        mRealm.beginTransaction();
         //Unfortunately realm is not supported sorting of objects
-        RealmResults<NewsItem> newsItems = realm.where(NewsItem.class).findAll();
-        realm.commitTransaction();
+        RealmResults<NewsItem> newsItems = mRealm.where(NewsItem.class).findAll();
+        mRealm.commitTransaction();
         mAdapter.setData(new ArrayList<>(newsItems));
         mAdapter.notifyDataSetChanged();
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
+
     public void refreshData() {
-        subscription = RestClient.getNewsService()
+        mSubscription = RestClient.getNewsService()
                 .getNews()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(NewsResponse::getPayload)
+                .map(NewsItems::getPayload)
                 .subscribe(newsItems -> {
-                    realm.beginTransaction();
-                    realm.clear(NewsItem.class);
-                    realm.copyToRealm(newsItems);
-                    realm.commitTransaction();
+                    mRealm.beginTransaction();
+                    mRealm.clear(NewsItem.class);
+                    mRealm.copyToRealm(newsItems);
+                    mRealm.commitTransaction();
                     loadData();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }, throwable -> {
@@ -93,8 +97,8 @@ public class ListNewsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (subscription != null && !subscription.isUnsubscribed()) {
-            subscription.unsubscribe();
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
         }
     }
 }

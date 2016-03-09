@@ -2,20 +2,13 @@ package com.example.isinotov.tinkoffnews.network;
 
 import android.support.annotation.NonNull;
 
-import com.example.isinotov.tinkoffnews.ApplicationWrapper;
 import com.example.isinotov.tinkoffnews.BuildConfig;
-import com.example.isinotov.tinkoffnews.utils.NetworkUtils;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Response;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmObject;

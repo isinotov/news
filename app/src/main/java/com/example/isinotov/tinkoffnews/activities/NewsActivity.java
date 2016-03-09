@@ -17,12 +17,19 @@ public class NewsActivity extends AppCompatActivity implements NewsAdapter.NewsA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        getFragmentManager().beginTransaction().replace(R.id.container, new ListNewsFragment()).commit();
+        getFragmentManager().
+                beginTransaction().
+                replace(R.id.list, new ListNewsFragment()).
+                commit();
     }
 
     @Override
     public void onNewsClicked(long newsId) {
-        getFragmentManager().beginTransaction().replace(R.id.container, DetailNewsFragment.newInstance(newsId)).addToBackStack(null).commit();
+        getFragmentManager().
+                beginTransaction().
+                replace(R.id.detail, DetailNewsFragment.newInstance(newsId)).
+                addToBackStack(null).
+                commit();
     }
 
 

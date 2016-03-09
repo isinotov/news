@@ -1,6 +1,5 @@
 package com.example.isinotov.tinkoffnews.models;
 
-import android.support.annotation.NonNull;
 
 import io.realm.RealmObject;
 

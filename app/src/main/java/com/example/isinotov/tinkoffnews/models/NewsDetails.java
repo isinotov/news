@@ -1,15 +1,13 @@
 package com.example.isinotov.tinkoffnews.models;
 
-import java.util.List;
-
 /**
- * Created by isinotov on 04/03/2016.
+ * Created by isinotov on 08/03/2016.
  */
-public class NewsResponse {
+public class NewsDetails {
     String resultCode;
-    List<NewsItem> payload;
+    NewsDetail payload;
 
-    public List<NewsItem> getPayload() {
+    public NewsDetail getPayload() {
         return payload;
     }
 

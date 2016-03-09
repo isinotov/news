@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHolder> {
 
-    private final NewsAdapterCallback callback;
+    private final NewsAdapterCallback mCallback;
     List<NewsItem> mData;
 
     public void setData(List<NewsItem> data) {
@@ -35,7 +35,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
 
     public NewsAdapter(Activity callback) {
         try {
-            this.callback = (NewsAdapterCallback) callback;
+            this.mCallback = (NewsAdapterCallback) callback;
         } catch (ClassCastException e) {
             throw new ClassCastException("You have to implement NewsAdapterCallback");
         }
@@ -54,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsItemViewHo
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MMMM dd");
         holder.tvNewsTitle.setText(Html.fromHtml(newsItem.getText()));
         holder.tvDate.setText(dateFormat.format(calendar.getTime()));
-        holder.itemView.setOnClickListener(v -> callback.onNewsClicked(newsItem.getId()));
+        holder.itemView.setOnClickListener(v -> mCallback.onNewsClicked(newsItem.getId()));
     }
 
     @Override

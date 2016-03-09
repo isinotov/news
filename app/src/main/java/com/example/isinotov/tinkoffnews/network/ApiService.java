@@ -1,7 +1,7 @@
 package com.example.isinotov.tinkoffnews.network;
 
-import com.example.isinotov.tinkoffnews.models.NewsDetailsResponse;
-import com.example.isinotov.tinkoffnews.models.NewsResponse;
+import com.example.isinotov.tinkoffnews.models.NewsDetails;
+import com.example.isinotov.tinkoffnews.models.NewsItems;
 
 import retrofit.http.GET;
 import retrofit.http.Query;
@@ -12,8 +12,8 @@ import rx.Observable;
  */
 public interface ApiService {
     @GET("news")
-    public Observable<NewsResponse> getNews();
+    Observable<NewsItems> getNews();
 
     @GET("news_content")
-    public Observable<NewsDetailsResponse> getDetailNews(@Query("id") long id);
+    Observable<NewsDetails> getDetailNews(@Query("id") long id);
 }
